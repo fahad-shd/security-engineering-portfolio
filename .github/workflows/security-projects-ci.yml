@@ -1,0 +1,32 @@
+name: Security Projects CI
+on:
+  push:
+    paths:
+      - "projects/**"
+      - ".github/workflows/security-projects-ci.yml"
+  pull_request:
+    paths:
+      - "projects/**"
+      - ".github/workflows/security-projects-ci.yml"
+jobs:
+  python-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [keylogger-detection, phishing-detection]
+    defaults:
+      run:
+        working-directory: projects/${{ matrix.project }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: |
+          if [ "${{ matrix.project }}" = "phishing-detection" ]; then
+            python train_model.py
+          fi
+      - run: python -m unittest discover -s tests -v
+      - name: Compile Python files
+        run: python -m compileall -q .
