@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>URL Risk Triage</title>
+  <style>
+    body{font:16px system-ui;max-width:900px;margin:40px auto;padding:0 18px;background:#f5f7fb;color:#172033}
+    main{background:white;padding:28px;border-radius:14px;box-shadow:0 4px 24px #17203312}
+    input{width:min(100%,620px);padding:12px;border:1px solid #aab4c5;border-radius:8px}
+    button{padding:12px 18px;border:0;border-radius:8px;background:#193b70;color:white;cursor:pointer}
+    pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f1f4f8;padding:16px;border-radius:8px}
+    .note{color:#596579;font-size:.92rem}
+  </style>
+</head>
+<body><main>
+  <h1>Phishing URL Triage</h1>
+  <p class="note">Static URL analysis only. The submitted URL is not visited or fetched. Demo model uses synthetic training data.</p>
+  <form id="form"><input id="url" type="text" placeholder="https://example.test/login" required>
+    <button type="submit">Analyze URL</button></form>
+  <h2>Result</h2><pre id="result">Enter a URL to begin.</pre>
+  <h2>Recent predictions (this process only)</h2><pre id="history">{% for item in recent %}{{ item.prediction }} — {{ item.url }}{% endfor %}</pre>
+</main>
+<script>
+document.getElementById("form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const output = document.getElementById("result");
+  output.textContent = "Analyzing…";
+  try {
+    const response = await fetch("/api/predict", {method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({url:document.getElementById("url").value})});
+    const data = await response.json();
+    output.textContent = JSON.stringify(data, null, 2);
+  } catch (error) { output.textContent = "Request failed: " + error.message; }
+});
+</script></body></html>
