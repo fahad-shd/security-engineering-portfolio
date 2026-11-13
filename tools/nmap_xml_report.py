@@ -18,8 +18,20 @@ def summarize(xml_text: str) -> dict:
         for port in host.findall("./ports/port"):
             state = port.find("state")
             service = port.find("service")
-            services.append({"protocol": port.get("protocol"), "port": int(port.get("portid", "0")), "state": state.get("state") if state is not None else "unknown", "service": service.get("name") if service is not None else None, "product": service.get("product") if service is not None else None, "version": service.get("version") if service is not None else None})
-        hosts.append({"addresses": addresses, "hostnames": names, "status": status.get("state") if status is not None else "unknown", "services": services})
+            services.append({
+                "protocol": port.get("protocol"),
+                "port": int(port.get("portid", "0")),
+                "state": state.get("state") if state is not None else "unknown",
+                "service": service.get("name") if service is not None else None,
+                "product": service.get("product") if service is not None else None,
+                "version": service.get("version") if service is not None else None,
+            })
+        hosts.append({
+            "addresses": addresses,
+            "hostnames": names,
+            "status": status.get("state") if status is not None else "unknown",
+            "services": services,
+        })
     return {"host_count": len(hosts), "hosts": hosts}
 
 def main() -> int:
@@ -27,7 +39,8 @@ def main() -> int:
     parser.add_argument("xml_file", type=Path)
     args = parser.parse_args()
     try:
-        print(json.dumps(summarize(args.xml_file.read_text(encoding="utf-8"), indent=2))
+        xml_text = args.xml_file.read_text(encoding="utf-8")
+        print(json.dumps(summarize(xml_text), indent=2))
     except (OSError, ET.ParseError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
