@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<nmaprun>
+  <host><status state="up"/><address addr="192.0.2.20" addrtype="ipv4"/>
+    <hostnames><hostname name="lab-web.local" type="user"/></hostnames>
+    <ports>
+      <port protocol="tcp" portid="22"><state state="open"/><service name="ssh"/></port>
+      <port protocol="tcp" portid="443"><state state="open"/><service name="https" product="ExampleServer" version="1.0"/></port>
+      <port protocol="tcp" portid="8080"><state state="closed"/></port>
+    </ports>
+  </host>
+</nmaprun>
