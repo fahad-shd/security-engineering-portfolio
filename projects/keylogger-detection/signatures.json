@@ -1,0 +1,13 @@
+{
+  "process_names": ["keylogger.exe", "logkeys", "logkext", "pykeylogger"],
+  "executable_names": ["keylogger.exe", "logkeys", "logkext"],
+  "path_contains": ["/tmp/keylogger", "\\appdata\\local\\temp\\keylogger"],
+  "command_line_contains": ["--capture-keys", "keylog"],
+  "weights": {
+    "process_name": 5,
+    "executable_name": 5,
+    "path_contains": 3,
+    "command_line_contains": 2
+  },
+  "alert_threshold": 5
+}
